@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takvim Tablosu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .table-bordered th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .table-bordered td:hover {
+            background-color: #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        #calendar-form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #calendar-form button {
+            width: 100px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #calendar-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group select {
+            height: 40px;
+        }
+
+        .table table-bordered {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        .table table-bordered th, .table table-bordered td {
+            vertical-align: middle;
+        }
+
+        .table table-bordered th, .table table-bordered td {
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .table table-bordered th, .table table-bordered td {
+            border-radius: 10px;
+        }
+
+        .table table-bordered td.selected {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <form id="calendar-form">
+            <h1 class="text-center mb-4">Takvim</h1>
+            <div class="form-group">
+                <label for="year">Yıl:</label>
+                <select id="year" class="form-control" onchange="generateCalendar()">
+                    <!-- Yıl seçenekleri 2023'ten başlayarak 10 yıl ileriye kadar -->
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="month">Ay:</label>
+                <select id="month" class="form-control" onchange="generateCalendar()">
+                    <option value="1">Ocak</option>
+                    <option value="2">Şubat</option>
+                    <option value="3">Mart</option>
+                    <option value="4">Nisan</option>
+                    <option value="5">Mayıs</option>
+                    <option value="6">Haziran</option>
+                    <option value="7">Temmuz</option>
+                    <option value="8">Ağustos</option>
+                    <option value="9">Eylül</option>
+                    <option value="10">Ekim</option>
+                    <option value="11">Kasım</option>
+                    <option value="12">Aralık</option>
+                </select>
+            </div>
+        </form>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Pzt</th>
+                    <th scope="col">Salı</th>
+                    <th scope="col">Çarşamba</th>
+                    <th scope="col">Perşembe</th>
+                    <th scope="col">Cuma</th>
+                    <th scope="col">Cumartesi</th>
+                    <th scope="col">Pazar</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        window.addEventListener('load', generateCalendar);
+        // Sayfa yüklendiğinde varsayılan olarak 2023 Ocak ayını görüntüle
+        generateCalendar();
+
+        function generateCalendar() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const calendarBody = document.getElementById('calendar-body');
+            calendarBody.innerHTML = '';
+
+            const date = new Date(year, month - 1, 1);
+            const lastDay = new Date(year, month, 0).getDate();
+            const firstDayIndex = date.getDay();
+
+            let dayCounter = 1;
+            let rowCount = Math.ceil((lastDay + firstDayIndex) / 7);
+
+            for (let i = 0; i < rowCount; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 7; j++) {
+                    const cell = document.createElement('td');
+                    if (i === 0 && j < firstDayIndex) {
+                        cell.innerHTML = '';
+                    } else if (dayCounter > lastDay) {
+                        cell.innerHTML = '';
+                    } else {
+                        cell.innerHTML = dayCounter;
+                        dayCounter++;
+                    }
+                    cell.addEventListener('click', () => {
+                        alert(`Tarih: ${cell.innerHTML}.${month}.${year}`);
+                        // Seçili hücreyi vurgula
+                        const selectedCells = document.querySelectorAll('.table table-bordered td.selected');
+                        selectedCells.forEach((selectedCell) => {
+                            selectedCell.classList.remove('selected');
+                        });
+                        cell.classList.add('selected');
+                    });
+                    row.appendChild(cell);
+                }
+                calendarBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+var olan stillerde değişklik yap ya da tabloda stil değişkliği yap butonlarda stil değişkliği yap arka planda dstil değişikliği yap var olmayan şey için değişiklik yapma 10 kat güzelleştir ve baştan aşağı yaz kodu.
